@@ -1,4 +1,4 @@
-# EduPay360 Backend
+# EduPay360 Frontend
 
 Cloud-based school management SaaS platform for African schools.
 
