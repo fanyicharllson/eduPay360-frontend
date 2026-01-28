@@ -1,14 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
-interface NavigationProps {
-  isDark: boolean;
-  onThemeToggle: () => void;
-}
-
-export function Navigation({ isDark, onThemeToggle }: NavigationProps) {
+export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const navLinks = [
     { label: "Features", href: "#features" },
@@ -48,41 +46,26 @@ export function Navigation({ isDark, onThemeToggle }: NavigationProps) {
             <div className="h-6 w-px bg-border mx-2" />
 
             {/* Right Section */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onThemeToggle}
-              className="text-foreground"
-            >
-              {isDark ? (
-                <Sun className="w-4 h-4" />
-              ) : (
-                <Moon className="w-4 h-4" />
-              )}
-            </Button>
+            <ThemeToggle />
 
-            <Button className="bg-primary text-white hover:bg-primary/90 mr-2" asChild>
-              <a href="#get-started">Get Started</a>
+            <Button
+              className="bg-primary text-white hover:bg-primary/90 mr-2"
+              asChild
+              onClick={() => navigate("/register")}
+            >
+              <a>Get Started</a>
             </Button>
-            <Button className="bg-primary hover:bg-primary/50 text-white">
+            <Button
+              className="bg-primary hover:bg-primary/50 text-white"
+              onClick={() => navigate("/login")}
+            >
               Sign In
             </Button>
           </div>
 
           {/* Mobile Menu - Right */}
           <div className="flex md:hidden items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onThemeToggle}
-              className="text-foreground"
-            >
-              {isDark ? (
-                <Sun className="w-4 h-4" />
-              ) : (
-                <Moon className="w-4 h-4" />
-              )}
-            </Button>
+            <ThemeToggle />
 
             <Button
               variant="ghost"
@@ -112,10 +95,17 @@ export function Navigation({ isDark, onThemeToggle }: NavigationProps) {
               </a>
             ))}
             <div className="px-4 pt-2 flex gap-2">
-              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold mb-2" asChild>
-                <a href="#get-started">Get Started</a>
+              <Button
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold mb-2"
+                asChild
+                onClick={() => navigate("/register")}
+              >
+                <a>Get Started</a>
               </Button>
-              <Button className="w-full bg-muted hover:bg-primary/10 text-primary-foreground">
+              <Button
+                className="w-full bg-muted hover:bg-primary/10 text-primary-foreground"
+                onClick={() => navigate("/login")}
+              >
                 Sign In
               </Button>
             </div>

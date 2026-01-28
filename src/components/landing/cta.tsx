@@ -12,7 +12,7 @@ export function CTA() {
   return (
     <section className="py-20 relative overflow-hidden">
       {/* Background elements */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20 opacity-30" />
+      <div className="absolute inset-0 bg-linear-to-r from-primary/20 via-secondary/20 to-accent/20 opacity-30" />
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl -mr-48" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/20 rounded-full blur-3xl -ml-48" />
 
@@ -34,17 +34,17 @@ export function CTA() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Button
               size="lg"
-              className="bg-gradient-to-r from-primary to-secondary hover:shadow-lg hover:shadow-primary/30 text-white group"
+              className="bg-linear-to-r from-primary to-secondary hover:shadow-lg hover:shadow-primary/30 text-white group"
             >
               Start Free Trial Now <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button
-              size="lg"
-              variant="outline"
-              className="border-border hover:bg-muted bg-transparent"
-            >
-              Schedule Demo
-            </Button>
+                size="lg"
+                variant="outline"
+                className="border-border/50 hover:bg-card/90 hover:border-primary/40 bg-transparent backdrop-blur-sm transition-all text-foreground hover:text-primary"
+              >
+                Schedule Demo
+              </Button>
           </div>
 
           {/* Trust badges */}

@@ -65,13 +65,13 @@ export function Footer() {
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4" />
                 <a href="mailto:info@edupay360.com" className="hover:text-primary transition-colors">
-                  info@edupay360.com
+                  charlseempire@gmail.com
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
                 <a href="tel:+237671234567" className="hover:text-primary transition-colors">
-                  +237 671 23 45 67
+                  +237 651 36 29 04
                 </a>
               </div>
             </div>

@@ -2,7 +2,7 @@ export const plans = [
   {
     name: 'Starter',
     description: 'Perfect for small schools',
-    price: '49,999',
+    price: '24,999',
     period: 'month',
     trialDays: 14,
     features: [
@@ -19,7 +19,7 @@ export const plans = [
   {
     name: 'Professional',
     description: 'Best for growing schools',
-    price: '149,999',
+    price: '74,999',
     period: 'month',
     trialDays: 14,
     features: [
@@ -56,4 +56,4 @@ export const plans = [
     ],
     highlighted: false,
   },
-]
+];

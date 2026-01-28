@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function Hero() {
+
   const [isVisible, setIsVisible] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsVisible(true);
@@ -41,7 +44,8 @@ export function Hero() {
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-7 pt-2 pb-8">
+
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left content */}
           <div
@@ -65,7 +69,7 @@ export function Hero() {
             </div>
 
             {/* Main Heading */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-6 leading-tight">
               Transform Your School Into A{" "}
               <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Digital Learning Hub
@@ -85,6 +89,7 @@ export function Hero() {
               <Button
                 size="lg"
                 className="bg-primary hover:bg-primary/90 group shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all text-white"
+                onClick={() => navigate("/register")}
               >
                 Start Free Trial{" "}
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
@@ -92,7 +97,7 @@ export function Hero() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-border/50 hover:bg-card/90 hover:border-primary/40 bg-transparent backdrop-blur-sm transition-all"
+                className="border-border/50 hover:bg-card/90 hover:border-primary/40 bg-transparent backdrop-blur-sm transition-all text-foreground hover:text-primary"
               >
                 Schedule Demo
               </Button>
