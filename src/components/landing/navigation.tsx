@@ -3,6 +3,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useOnboardingStatus } from "@/hooks/useOnboardingStatus";
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,6 +14,25 @@ export function Navigation() {
     { label: "Pricing", href: "#pricing" },
     { label: "Support", href: "#support" },
   ];
+
+  // Fetch onboarding status (only if user is likely logged in)
+  const { data: onboarding, isLoading: onboardingLoading } = useOnboardingStatus({ enabled: true });
+
+  // Determine CTA label and action
+  let ctaLabel = "Get Started";
+  let ctaAction = () => navigate("/register");
+  if (onboarding && !onboarding.completed) {
+    if (!onboarding.emailVerified) {
+      ctaLabel = "Verify Email";
+      ctaAction = () => navigate(`/verify?email=${encodeURIComponent(onboarding.email || "")}`);
+    } else if (!onboarding.passwordSet) {
+      ctaLabel = "Set Password";
+      ctaAction = () => navigate(`/verify?email=${encodeURIComponent(onboarding.email || "")}&step=password`);
+    } else {
+      ctaLabel = "Continue Onboarding";
+      ctaAction = () => navigate("/dashboard");
+    }
+  }
 
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -50,10 +70,10 @@ export function Navigation() {
 
             <Button
               className="bg-primary text-white hover:bg-primary/90 mr-2"
-              asChild
-              onClick={() => navigate("/register")}
+              onClick={ctaAction}
+              disabled={onboardingLoading}
             >
-              <a>Get Started</a>
+              {ctaLabel}
             </Button>
             <Button
               className="bg-primary hover:bg-primary/50 text-white"
@@ -97,10 +117,10 @@ export function Navigation() {
             <div className="px-4 pt-2 flex gap-2">
               <Button
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold mb-2"
-                asChild
-                onClick={() => navigate("/register")}
+                onClick={ctaAction}
+                disabled={onboardingLoading}
               >
-                <a>Get Started</a>
+                {ctaLabel}
               </Button>
               <Button
                 className="w-full bg-muted hover:bg-primary/10 text-primary-foreground"

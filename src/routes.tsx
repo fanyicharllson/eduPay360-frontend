@@ -10,6 +10,8 @@ import { CTA } from "@/components/landing/cta";
 import { Footer } from "@/components/landing/footer";
 import { FloatingButtons } from "@/components/landing/floating-buttons";
 import { PaymentFeatures } from "./components/landing/payment-features";
+import Onboarding from "./pages/onboarding";
+import VerifyPage from "./pages/verify";
 
 function Landing() {
   return (
@@ -29,6 +31,8 @@ function Landing() {
   );
 }
 
+
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -41,6 +45,14 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage />,
+  },
+  {
+    path: "/onboarding",
+    element: <Onboarding />,
+  },
+  {
+    path: "/verify",
+    element: <VerifyPage />,
   },
   {
     path: "*",

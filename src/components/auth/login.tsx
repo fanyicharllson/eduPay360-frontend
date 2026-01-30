@@ -14,35 +14,39 @@ import {
 import type { LoginFormData } from "@/lib/login.schema";
 import { loginSchema } from "@/lib/login.schema";
 import { Link } from "react-router-dom";
+import { toast } from "@/lib/toast";
 
 export function Login() {
-  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isLoading },
+    formState: { errors },
     reset,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Login attempt:", { email: data.email, rememberMe });
+      toast.success("Login successful!", {
+        description: "Welcome back"
+      })
+      console.log("Login attempt:", { email: data.email });
       reset();
     } catch (error) {
       console.error("Login failed:", error);
     } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleAuth0Login = () => {
-    console.log("Auth0 login initiated");
-  };
+ 
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 overflow-hidden">
@@ -65,6 +69,11 @@ export function Login() {
       />
 
       <div className="relative z-10 w-full max-w-6xl">
+        <div className="mb-6">
+          <Link to="/" className="inline-flex items-center gap-1 text-primary hover:underline font-medium text-sm">
+            <ArrowRight className="w-4 h-4 rotate-180" /> Go Back
+          </Link>
+        </div>
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           
           {/* Left - Captivating Design */}
@@ -150,35 +159,9 @@ export function Login() {
                 </p>
               </div>
 
-              {/* Auth0 Button */}
-              <Button
-                type="button"
-                onClick={handleAuth0Login}
-                variant="outline"
-                className="w-full border-border/50 hover:bg-card/50 hover:border-primary/40 bg-transparent backdrop-blur-sm transition-all mb-6 flex items-center justify-center gap-2"
-              >
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    fill="currentColor"
-                    opacity="0.3"
-                  />
-                  <path
-                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-                    fill="currentColor"
-                  />
-                </svg>
-                Continue with Auth0
-              </Button>
 
               {/* Divider */}
-              <div className="relative mb-6">
+              {/* <div className="relative mb-6">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-border/50" />
                 </div>
@@ -187,7 +170,7 @@ export function Login() {
                     Or continue with email
                   </span>
                 </div>
-              </div>
+              </div> */}
 
               {/* Email & Password Form */}
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -261,17 +244,6 @@ export function Login() {
 
                 {/* Remember & Forgot */}
                 <div className="flex items-center justify-between pt-2">
-                  <label className="flex items-center gap-2 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      className="rounded border-border cursor-pointer accent-primary"
-                    />
-                    <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                      Remember me
-                    </span>
-                  </label>
                   <a
                     href="#"
                     className="text-sm text-primary hover:underline font-medium"

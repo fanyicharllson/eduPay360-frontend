@@ -2,15 +2,34 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useOnboardingStatus } from "@/hooks/useOnboardingStatus";
 
 export function Hero() {
 
+
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
+  const { data: onboarding, isLoading: onboardingLoading } = useOnboardingStatus({ enabled: true });
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+  // Determine CTA label and action
+  let ctaLabel = "Start Free Trial";
+  let ctaAction = () => navigate("/register");
+  if (onboarding && !onboarding.completed) {
+    if (!onboarding.emailVerified) {
+      ctaLabel = "Verify Email";
+      ctaAction = () => navigate(`/verify?email=${encodeURIComponent(onboarding.email || "")}`);
+    } else if (!onboarding.passwordSet) {
+      ctaLabel = "Set Password";
+      ctaAction = () => navigate(`/verify?email=${encodeURIComponent(onboarding.email || "")}&step=password`);
+    } else {
+      ctaLabel = "Continue Onboarding";
+      ctaAction = () => navigate("/dashboard");
+    }
+  }
 
   return (
     <section className="relative overflow-hidden">
@@ -55,17 +74,33 @@ export function Hero() {
                 : "opacity-0 -translate-x-10"
             }`}
           >
-            {/* Animated Badge */}
-            <div className="inline-flex items-center gap-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/40 rounded-full px-4 py-2 mb-8 hover:border-primary/60 transition-colors group">
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
-                </span>
-                <span className="text-sm font-semibold text-primary">
-                  New in Africa
-                </span>
+
+            {/* Animated Badge (left) and Onboarding Banner (right, subtle, responsive) */}
+            <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-2 w-full">
+              <div className="inline-flex items-center gap-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/40 rounded-full px-4 py-2 hover:border-primary/60 transition-colors group">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                  </span>
+                  <span className="text-sm font-semibold text-primary">
+                    New in Africa
+                  </span>
+                </div>
               </div>
+              {/* Onboarding banner if incomplete, subtle and responsive */}
+              {onboarding && !onboarding.completed && (
+                <div className="inline-flex items-center gap-2 bg-secondary/10 border border-border text-primary rounded-full px-3 py-2 text-sm font-medium shadow-sm mt-2 sm:mt-0">
+                  <span className="font-semibold">Resume onboarding:</span>
+                  {!onboarding.emailVerified && onboarding.email ? (
+                    <span>Verify your email ({onboarding.email})</span>
+                  ) : !onboarding.passwordSet ? (
+                    <span>Set your password to continue</span>
+                  ) : (
+                    <span>Complete your setup</span>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Main Heading */}
@@ -89,10 +124,10 @@ export function Hero() {
               <Button
                 size="lg"
                 className="bg-primary hover:bg-primary/90 group shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all text-white"
-                onClick={() => navigate("/register")}
+                onClick={ctaAction}
+                disabled={onboardingLoading}
               >
-                Start Free Trial{" "}
-                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                {ctaLabel} <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button
                 size="lg"
@@ -102,6 +137,19 @@ export function Hero() {
                 Schedule Demo
               </Button>
             </div>
+            {/* Onboarding banner if incomplete */}
+            {onboarding && !onboarding.completed && (
+              <div className="mb-4 p-3 rounded-lg bg-warning/10 border border-warning/30 text-warning flex items-center gap-2">
+                <span className="font-semibold">Resume onboarding:</span>
+                {!onboarding.emailVerified && onboarding.email ? (
+                  <span>Verify your email ({onboarding.email})</span>
+                ) : !onboarding.passwordSet ? (
+                  <span>Set your password to continue</span>
+                ) : (
+                  <span>Complete your setup</span>
+                )}
+              </div>
+            )}
 
             {/* Trust indicators */}
             <div className="pt-4 border-t border-border/50">

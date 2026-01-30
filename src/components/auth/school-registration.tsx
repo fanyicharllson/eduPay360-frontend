@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -17,109 +16,53 @@ import {
   registrationSchema,
   type RegistrationFormData,
 } from "@/lib/register.schema";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useRegisterSchool } from "@/hooks/useRegisterSchool";
+import { toast } from "@/lib/toast";
 
 export function SchoolRegistration() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
   });
 
-  const emailValue = watch("email");
+  const registerSchoolMutation = useRegisterSchool();
 
-  const onSubmit = async (data: RegistrationFormData) => {
-    setIsLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Registration data:", data);
-      setIsSubmitted(true);
-    } catch (error) {
-      console.error("Registration failed:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4 overflow-hidden">
-        {/* Background decorative elements */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              "linear-gradient(90deg, currentColor 1px, transparent 1px), linear-gradient(currentColor 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
-        <div
-          className="absolute top-0 left-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse"
-          style={{ animation: "float 6s ease-in-out infinite" }}
-        />
-        <div
-          className="absolute bottom-0 right-0 w-80 h-80 bg-secondary/15 rounded-full blur-3xl animate-pulse"
-          style={{ animation: "float 8s ease-in-out infinite reverse" }}
-        />
-
-        <div className="relative z-10 max-w-md w-full">
-          <div className="bg-card rounded-2xl border border-border p-8 text-center">
-            <div className="mb-6 flex justify-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center animate-pulse">
-                <CheckCircle2 className="w-8 h-8 text-white" />
-              </div>
-            </div>
-
-            <h2 className="text-2xl font-bold text-foreground mb-3">
-              Welcome to EduPay360!
-            </h2>
-            <p className="text-muted-foreground mb-8">
-              Your registration is complete. We've sent a verification email to{" "}
-              <strong>{emailValue}</strong>.
-            </p>
-
-            <div className="bg-card/50 border border-border/50 rounded-lg p-6 text-left space-y-3 mb-8">
-              <p className="text-sm font-semibold text-foreground">
-                Next Steps:
-              </p>
-              <ol className="text-sm text-muted-foreground space-y-2">
-                <li className="flex items-start gap-2">
-                  <span className="font-bold text-primary min-w-fit">1.</span>
-                  <span>Verify your email address</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-bold text-primary min-w-fit">2.</span>
-                  <span>Set up your admin account</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-bold text-primary min-w-fit">3.</span>
-                  <span>Add staff and students</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-bold text-primary min-w-fit">4.</span>
-                  <span>Start your 14-day free trial</span>
-                </li>
-              </ol>
-            </div>
-
-            <Button className="w-full bg-gradient-to-r from-primary to-secondary hover:shadow-lg text-white mb-4">
-              Check Email
-            </Button>
-
-            <button className="w-full text-primary hover:underline font-medium transition-colors text-sm">
-              Didn't receive email? Resend
-            </button>
-          </div>
-        </div>
-      </div>
+  const onSubmit = (data: RegistrationFormData) => {
+    console.log("School data: ", data);
+    registerSchoolMutation.mutate(
+      {
+        name: data.schoolName,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+      },
+      {
+        onSuccess: (response) => {
+          if (response.success) {
+            toast.success("Registration successful!", {
+              description: "A verification code has been sent to your email."
+            });
+            navigate("/verify", { state: { email: data.email } });
+          } else {
+            toast.error(response.message || "Registration failed");
+          }
+        },
+        onError: (error: any) => {
+          const message =
+            error?.response?.data?.message ||
+            (typeof error === "string"
+              ? error
+              : "Registration failed. Please try again.");
+          toast.error(message);
+        },
+      },
     );
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 overflow-hidden">
@@ -142,6 +85,14 @@ export function SchoolRegistration() {
       />
 
       <div className="relative z-10 w-full max-w-6xl">
+        <div className="mb-6">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1 text-primary hover:underline font-medium text-sm"
+          >
+            <ArrowRight className="w-4 h-4 rotate-180" /> Go Back
+          </Link>
+        </div>
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left - Captivating Design */}
           <div className="hidden lg:flex flex-col items-start space-y-8">
@@ -424,13 +375,13 @@ export function SchoolRegistration() {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={registerSchoolMutation.isPending}
                   className="w-full bg-gradient-to-r from-primary to-secondary hover:shadow-lg hover:shadow-primary/30 text-white font-semibold py-2.5 rounded-lg transition-all duration-300 group mt-6"
                 >
-                  {isLoading ? (
+                  {registerSchoolMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Creating Account...
+                      Registering School...
                     </>
                   ) : (
                     <>
