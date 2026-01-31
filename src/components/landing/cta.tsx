@@ -1,13 +1,45 @@
-import { Button } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { Button } from "@/components/ui/button";
+import { useOnboardingStatus } from "@/hooks/useOnboardingStatus";
+import { ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function CTA() {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false);
+  const { data: onboarding, isLoading: onboardingLoading } =
+    useOnboardingStatus({ enabled: true });
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setIsVisible(true)
-  }, [])
+    setIsVisible(true);
+  }, []);
+
+  // Determine CTA label and action
+  let ctaLabel = "Start Free Trial";
+  let ctaAction = () => navigate("/register");
+  if (onboarding) {
+    if (!onboarding.completed) {
+      if (!onboarding.emailVerified) {
+        ctaLabel = "Verify Email";
+        ctaAction = () =>
+          navigate(
+            `/verify?email=${encodeURIComponent(onboarding.email || "")}`,
+          );
+      } else if (!onboarding.passwordSet) {
+        ctaLabel = "Set Password";
+        ctaAction = () =>
+          navigate(
+            `/verify?email=${encodeURIComponent(onboarding.email || "")}&step=password`,
+          );
+      } else {
+        ctaLabel = "Continue Onboarding";
+        ctaAction = () => navigate("/dashboard");
+      }
+    } else {
+      ctaLabel = "Go to Dashboard";
+      ctaAction = () => navigate("/dashboard");
+    }
+  }
 
   return (
     <section className="py-20 relative overflow-hidden">
@@ -19,7 +51,7 @@ export function CTA() {
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
           className={`bg-card border border-border rounded-3xl p-12 md:p-16 text-center transform transition-all duration-1000 ${
-            isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+            isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
           }`}
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
@@ -27,24 +59,28 @@ export function CTA() {
           </h2>
 
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            Join hundreds of African schools that are already using EduPay360 to streamline operations,
-            improve student outcomes, and increase revenue. Start your free 14-day trial today.
+            Join hundreds of African schools that are already using EduPay360 to
+            streamline operations, improve student outcomes, and increase
+            revenue. Start your free 14-day trial today.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Button
               size="lg"
               className="bg-linear-to-r from-primary to-secondary hover:shadow-lg hover:shadow-primary/30 text-white group"
+              disabled={onboardingLoading}
+              onClick={ctaAction}
             >
-              Start Free Trial Now <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+              {ctaLabel}
+              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button
-                size="lg"
-                variant="outline"
-                className="border-border/50 hover:bg-card/90 hover:border-primary/40 bg-transparent backdrop-blur-sm transition-all text-foreground hover:text-primary"
-              >
-                Schedule Demo
-              </Button>
+              size="lg"
+              variant="outline"
+              className="border-border/50 hover:bg-card/90 hover:border-primary/40 bg-transparent backdrop-blur-sm transition-all text-foreground hover:text-primary"
+            >
+              Schedule Demo
+            </Button>
           </div>
 
           {/* Trust badges */}
@@ -65,5 +101,5 @@ export function CTA() {
         </div>
       </div>
     </section>
-  )
+  );
 }

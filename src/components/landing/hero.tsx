@@ -1,36 +1,45 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOnboardingStatus } from "@/hooks/useOnboardingStatus";
 
 export function Hero() {
-
-
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
-  const { data: onboarding, isLoading: onboardingLoading } = useOnboardingStatus({ enabled: true });
+  const { data: onboarding, isLoading: onboardingLoading } =
+    useOnboardingStatus({ enabled: true });
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
-  // Determine CTA label and action
-  let ctaLabel = "Start Free Trial";
+  let ctaLabel = "Start free trial";
   let ctaAction = () => navigate("/register");
-  if (onboarding && !onboarding.completed) {
-    if (!onboarding.emailVerified) {
-      ctaLabel = "Verify Email";
-      ctaAction = () => navigate(`/verify?email=${encodeURIComponent(onboarding.email || "")}`);
-    } else if (!onboarding.passwordSet) {
-      ctaLabel = "Set Password";
-      ctaAction = () => navigate(`/verify?email=${encodeURIComponent(onboarding.email || "")}&step=password`);
+  if (onboarding) {
+    if (!onboarding.completed) {
+      if (!onboarding.emailVerified) {
+        ctaLabel = "Verify Email";
+        ctaAction = () =>
+          navigate(
+            `/verify?email=${encodeURIComponent(onboarding.email || "")}`,
+          );
+      } else if (!onboarding.passwordSet) {
+        ctaLabel = "Set Password";
+        ctaAction = () =>
+          navigate(
+            `/verify?email=${encodeURIComponent(onboarding.email || "")}&step=password`,
+          );
+      } else {
+        ctaLabel = "Continue Onboarding";
+        ctaAction = () => navigate("/dashboard");
+      }
     } else {
-      ctaLabel = "Continue Onboarding";
+      ctaLabel = "Go to Dashboard";
       ctaAction = () => navigate("/dashboard");
     }
   }
-
   return (
     <section className="relative overflow-hidden">
       {/* Background Elements */}
@@ -64,7 +73,6 @@ export function Hero() {
       <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-7 pt-2 pb-8">
-
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left content */}
           <div
@@ -74,7 +82,6 @@ export function Hero() {
                 : "opacity-0 -translate-x-10"
             }`}
           >
-
             {/* Animated Badge (left) and Onboarding Banner (right, subtle, responsive) */}
             <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-2 w-full">
               <div className="inline-flex items-center gap-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/40 rounded-full px-4 py-2 hover:border-primary/60 transition-colors group">
@@ -127,7 +134,8 @@ export function Hero() {
                 onClick={ctaAction}
                 disabled={onboardingLoading}
               >
-                {ctaLabel} <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                {ctaLabel}{" "}
+                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button
                 size="lg"

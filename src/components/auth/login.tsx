@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useLogin } from "@/hooks/useLogin";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -16,9 +18,10 @@ import { loginSchema } from "@/lib/login.schema";
 import { Link } from "react-router-dom";
 import { toast } from "@/lib/toast";
 
-export function Login() {
+function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const loginMutation = useLogin();
 
   const {
     register,
@@ -30,23 +33,25 @@ export function Login() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      toast.success("Login successful!", {
-        description: "Welcome back"
-      })
-      console.log("Login attempt:", { email: data.email });
-      reset();
-    } catch (error) {
-      console.error("Login failed:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    loginMutation.mutate(
+      { email: data.email, password: data.password },
+      {
+        onSuccess: () => {
+          // Set flag for Hero onboarding fetch
+          localStorage.setItem("isAuthenticated", "true");
+          toast.success("Login successful!", { description: "Welcome back" });
+          reset();
+          navigate("/dashboard");
+        },
+        onError: (error: any) => {
+          toast.error(
+            error?.response?.data?.message ||
+              "Login failed. Please check your credentials.",
+          );
+        },
+      },
+    );
   };
-
- 
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 overflow-hidden">
@@ -70,12 +75,14 @@ export function Login() {
 
       <div className="relative z-10 w-full max-w-6xl">
         <div className="mb-6">
-          <Link to="/" className="inline-flex items-center gap-1 text-primary hover:underline font-medium text-sm">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1 text-primary hover:underline font-medium text-sm"
+          >
             <ArrowRight className="w-4 h-4 rotate-180" /> Go Back
           </Link>
         </div>
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          
           {/* Left - Captivating Design */}
           <div className="hidden lg:flex flex-col items-start space-y-8">
             <div>
@@ -158,7 +165,6 @@ export function Login() {
                   Access your school dashboard with your credentials
                 </p>
               </div>
-
 
               {/* Divider */}
               {/* <div className="relative mb-6">
@@ -255,10 +261,10 @@ export function Login() {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={loginMutation.isPending}
                   className="w-full bg-gradient-to-r from-primary to-secondary hover:shadow-lg hover:shadow-primary/30 text-white font-semibold py-2.5 rounded-lg transition-all duration-300 group mt-6"
                 >
-                  {isLoading ? (
+                  {loginMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       Signing in...
@@ -289,3 +295,5 @@ export function Login() {
     </div>
   );
 }
+
+export default Login;

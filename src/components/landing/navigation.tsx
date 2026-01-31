@@ -16,20 +16,32 @@ export function Navigation() {
   ];
 
   // Fetch onboarding status (only if user is likely logged in)
-  const { data: onboarding, isLoading: onboardingLoading } = useOnboardingStatus({ enabled: true });
+  const { data: onboarding, isLoading: onboardingLoading } =
+    useOnboardingStatus({ enabled: true });
 
   // Determine CTA label and action
   let ctaLabel = "Get Started";
   let ctaAction = () => navigate("/register");
-  if (onboarding && !onboarding.completed) {
-    if (!onboarding.emailVerified) {
-      ctaLabel = "Verify Email";
-      ctaAction = () => navigate(`/verify?email=${encodeURIComponent(onboarding.email || "")}`);
-    } else if (!onboarding.passwordSet) {
-      ctaLabel = "Set Password";
-      ctaAction = () => navigate(`/verify?email=${encodeURIComponent(onboarding.email || "")}&step=password`);
+  if (onboarding) {
+    if (!onboarding.completed) {
+      if (!onboarding.emailVerified) {
+        ctaLabel = "Verify Email";
+        ctaAction = () =>
+          navigate(
+            `/verify?email=${encodeURIComponent(onboarding.email || "")}`,
+          );
+      } else if (!onboarding.passwordSet) {
+        ctaLabel = "Set Password";
+        ctaAction = () =>
+          navigate(
+            `/verify?email=${encodeURIComponent(onboarding.email || "")}&step=password`,
+          );
+      } else {
+        ctaLabel = "Continue Onboarding";
+        ctaAction = () => navigate("/dashboard");
+      }
     } else {
-      ctaLabel = "Continue Onboarding";
+      ctaLabel = "Go to Dashboard";
       ctaAction = () => navigate("/dashboard");
     }
   }
