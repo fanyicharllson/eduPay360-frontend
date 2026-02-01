@@ -17,6 +17,14 @@ import { Footer } from "@/components/landing/footer";
 import { FloatingButtons } from "@/components/landing/floating-buttons";
 import { PaymentFeatures } from "./components/landing/payment-features";
 import VerifyPage from "./pages/verify";
+import SettingsPage from "./pages/dashboard/settings";
+import HostelPage from "./pages/dashboard/hostel";
+import TransportPage from "./pages/dashboard/transport";
+import AttendancePage from "./pages/dashboard/attendance";
+import SubjectsPage from "./pages/dashboard/subjects";
+import FinancePage from "./pages/dashboard/finance";
+import NotFoundPage from "./pages/404";
+
 
 function Landing() {
   return (
@@ -35,8 +43,6 @@ function Landing() {
     </main>
   );
 }
-
-
 
 export const router = createBrowserRouter([
   {
@@ -70,7 +76,47 @@ export const router = createBrowserRouter([
         path: "teachers",
         element: <TeachersPage />,
       },
-      // Add more dashboard subroutes here as needed
+      {
+        path: "settings",
+        element: <SettingsPage />,
+      },
+      {
+        path: "hostel",
+        element: <HostelPage />,
+      },
+      {
+        path: "transport",
+        element: <TransportPage />,
+      },
+      {
+        path: "attendance",
+        element: <AttendancePage />,
+      },
+      {
+        path: "subjects",
+        element: <SubjectsPage />,
+      },
+      {
+        path: "finance",
+        element: <FinancePage />,
+      },
+      // testing empty state page
+      // {
+      //   path: "empty",
+      //   element: (
+      //     <EmptyState
+      //     title="Welcome to EduPay360!"
+      //     message="Get started by adding your first teacher or student to your school management system and explore the features available to you."
+      //     lottieSrc="/lottie/empty-state.lottie"
+      //       actions={
+      //         <>
+      //           <Button>Add Teacher</Button>
+      //           <Button variant="outline">Add Student</Button>
+      //         </>
+      //       }
+      //     />
+      //   ),
+      // },
     ],
   },
   {
@@ -87,6 +133,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <Landing />,
+    element: <NotFoundPage />,
   },
 ]);

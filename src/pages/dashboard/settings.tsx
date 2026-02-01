@@ -3,8 +3,15 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Bell, Lock, Users, FileText, Trash2 } from 'lucide-react'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 
 export default function SettingsPage() {
+  const { data } = useCurrentUser();
+    const user = data?.data;
+    const schoolName = user?.name || "User";
+    const displayEmail = user?.email || "";
+    const phoneNumber = user?.phone || "";
+    const location = user?.address || "";
   return (
     <>
       <div className="space-y-6 max-w-4xl">
@@ -24,19 +31,19 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">School Name</label>
-                <Input placeholder="Enter school name" defaultValue="Brilliant Academy" />
+                <Input placeholder="Enter school name" defaultValue={schoolName} />
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">Email Address</label>
-                <Input placeholder="school@email.com" defaultValue="school@example.com" />
+                <Input placeholder="school@email.com" defaultValue={displayEmail} />
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">Phone Number</label>
-                <Input placeholder="+237 ..." defaultValue="+237 671 234 567" />
+                <Input placeholder="+237 ..." defaultValue={phoneNumber} />
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">Location</label>
-                <Input placeholder="City, Country" defaultValue="Yaoundé, Cameroon" />
+                <Input placeholder="City, Country" defaultValue={location} />
               </div>
             </div>
             <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">Save Changes</Button>
