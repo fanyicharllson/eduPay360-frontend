@@ -1,12 +1,20 @@
 import { useState } from "react";
-import { Settings, Menu, X, ChevronDown } from "lucide-react";
+import { Settings, Menu, X, ChevronDown, MenuIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Link, useLocation } from "react-router-dom";
-import { navItems, type NavItem } from "@/lib/navitems";
+import { Link, useLocation, useParams } from "react-router-dom";
+import { getNavItems, type NavItem } from "@/lib/navitems";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { schoolId } = useParams<{ schoolId: string }>();
+  const { data: userData } = useCurrentUser();
+  const user = userData?.data;
+  
+  // Generate navItems with schoolId
+  const navItems = getNavItems(schoolId || user?.schoolPublicId || '');
+  
   // Expand parent dropdown if a nested route is active
   const location = useLocation();
   const pathname = location.pathname;
@@ -52,11 +60,15 @@ export function Sidebar() {
             item.children.some((child) => child.href === pathname));
         const hasChildren = item.children && item.children.length > 0;
         // Only highlight as active if this exact item is active (not just any child)
-        const isActive = pathname === item.href;
-        // Highlight parent if any child is active
-        const isChildActive = item.children?.some(
-          (child) => pathname === child.href,
-        );
+        // Only highlight as active if this is a leaf (no children) and matches the path
+        const isLeaf = !item.children || item.children.length === 0;
+        const isActive = isLeaf && pathname === item.href;
+        // Highlight parent if any child is active (for icon/text color only, not background)
+        const isChildActive = item.children?.some((child) => {
+          if (!child.children) return pathname === child.href;
+          // Recursively check grandchildren
+          return child.children.some((grand) => pathname === grand.href);
+        });
 
         const content = (
           <span className="w-full flex items-center gap-3">
@@ -109,11 +121,10 @@ export function Sidebar() {
                 className={cn(
                   "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group relative",
                   depth > 0 ? "pl-8 text-sm" : "",
-                  isActive
-                    ? "bg-primary/20 border-l-4 border-primary text-primary"
-                    : isChildActive
-                      ? "bg-primary/10 border-l-4 border-primary/50 text-primary/80"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                  // Make parent highlight not noticeable
+                  isChildActive
+                    ? "bg-transparent border-l-4 border-transparent text-primary/80"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
                 type="button"
               >
@@ -155,10 +166,10 @@ export function Sidebar() {
       <Button
         variant="ghost"
         size="icon"
-        className="fixed top-4 left-4 lg:hidden z-50"
+        className="fixed top-6 left-1 lg:hidden z-50"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        {isOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-15 h-15 font-bold" />}
       </Button>
 
       {/* Sidebar */}
@@ -170,7 +181,7 @@ export function Sidebar() {
       >
         {/* Logo */}
         <div className="p-6 border-b border-border">
-          <Link to="/dashboard" className="flex items-center gap-2 group">
+          <Link to={`/dashboard/${schoolId || user?.schoolPublicId || ''}`} className="flex items-center gap-2 group">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center group-hover:shadow-lg group-hover:shadow-primary/40 transition-all">
               <span className="text-sm font-bold text-white">EP</span>
             </div>
@@ -184,17 +195,17 @@ export function Sidebar() {
         </nav>
 
         {/* Bottom Section */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border space-y-2 bg-card">
+        <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-border space-y-2 bg-card">
           <Link
-            to="/dashboard/settings"
+            to={`/dashboard/${schoolId || user?.schoolPublicId || ''}/settings`}
             className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
           >
             <Settings className="w-5 h-5" />
             <span className="font-medium text-sm">Settings</span>
           </Link>
-          <div className="pt-2 border-t border-border">
+          {/* <div className="pt-2 border-t border-border">
             <p className="text-xs text-muted-foreground px-4 py-2">v1.0.0</p>
-          </div>
+          </div> */}
         </div>
       </aside>
 

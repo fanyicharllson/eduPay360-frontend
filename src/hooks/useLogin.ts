@@ -7,9 +7,10 @@ export interface LoginPayload {
 }
 
 export function useLogin() {
-  return useMutation({
+  return useMutation<ApiResponse<AuthResponse>, unknown, LoginPayload>({
     mutationFn: async (payload: LoginPayload) => {
       const res = await api.post("/auth/login", payload);
+      console.log("Login response data: ", res.data);
       return res.data;
     },
   });

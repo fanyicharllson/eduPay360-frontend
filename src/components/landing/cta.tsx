@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useOnboardingStatus } from "@/hooks/useOnboardingStatus";
 import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -9,6 +10,8 @@ export function CTA() {
   const { data: onboarding, isLoading: onboardingLoading } =
     useOnboardingStatus({ enabled: true });
   const navigate = useNavigate();
+   const { data: userData } = useCurrentUser();
+   const schoolPublicId = userData?.data?.schoolPublicId;
 
   useEffect(() => {
     setIsVisible(true);
@@ -33,11 +36,11 @@ export function CTA() {
           );
       } else {
         ctaLabel = "Continue Onboarding";
-        ctaAction = () => navigate("/dashboard");
+        ctaAction = () => navigate(`/dashboard/${schoolPublicId}`);
       }
     } else {
       ctaLabel = "Go to Dashboard";
-      ctaAction = () => navigate("/dashboard");
+      ctaAction = () => navigate(`/dashboard/${schoolPublicId}`);
     }
   }
 

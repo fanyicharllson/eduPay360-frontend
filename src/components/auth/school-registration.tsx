@@ -17,7 +17,7 @@ import {
   type RegistrationFormData,
 } from "@/lib/register.schema";
 import { Link, useNavigate } from "react-router-dom";
-import { useRegisterSchool } from "@/hooks/useRegisterSchool";
+import { useRegisterSchool } from "@/hooks/useSchool";
 import { toast } from "@/lib/toast";
 
 export function SchoolRegistration() {

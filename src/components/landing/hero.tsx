@@ -4,12 +4,15 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOnboardingStatus } from "@/hooks/useOnboardingStatus";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export function Hero() {
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
   const { data: onboarding, isLoading: onboardingLoading } =
     useOnboardingStatus({ enabled: true });
+  const { data: userData } = useCurrentUser();
+  const schoolPublicId = userData?.data?.schoolPublicId;
 
   useEffect(() => {
     setIsVisible(true);
@@ -33,11 +36,11 @@ export function Hero() {
           );
       } else {
         ctaLabel = "Continue Onboarding";
-        ctaAction = () => navigate("/dashboard");
+        ctaAction = () => navigate(`/dashboard/${schoolPublicId}`);
       }
     } else {
       ctaLabel = "Go to Dashboard";
-      ctaAction = () => navigate("/dashboard");
+      ctaAction = () => navigate(`/dashboard/${schoolPublicId}`);
     }
   }
   return (

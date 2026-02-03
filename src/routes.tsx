@@ -50,7 +50,7 @@ export const router = createBrowserRouter([
     element: <Landing />,
   },
   {
-    path: "/dashboard",
+    path: "/dashboard/:schoolId",
     element: (
       <Protected>
         <DashboardLayout>

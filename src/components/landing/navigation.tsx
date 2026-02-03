@@ -4,10 +4,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useOnboardingStatus } from "@/hooks/useOnboardingStatus";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { data: userData } = useCurrentUser();
+  const schoolPublicId = userData?.data?.schoolPublicId;
 
   const navLinks = [
     { label: "Features", href: "#features" },
@@ -38,11 +41,11 @@ export function Navigation() {
           );
       } else {
         ctaLabel = "Continue Onboarding";
-        ctaAction = () => navigate("/dashboard");
+        ctaAction = () => navigate(`/dashboard/${schoolPublicId}`);
       }
     } else {
       ctaLabel = "Go to Dashboard";
-      ctaAction = () => navigate("/dashboard");
+      ctaAction = () => navigate(`/dashboard/${schoolPublicId}`);
     }
   }
 

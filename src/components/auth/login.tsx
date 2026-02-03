@@ -36,12 +36,18 @@ function Login() {
     loginMutation.mutate(
       { email: data.email, password: data.password },
       {
-        onSuccess: () => {
+        onSuccess: (response) => {
           // Set flag for Hero onboarding fetch
           localStorage.setItem("isAuthenticated", "true");
           toast.success("Login successful!", { description: "Welcome back" });
           reset();
-          navigate("/dashboard");
+          // Redirect to dashboard with schoolPublicId
+          const schoolPublicId = response?.data?.schoolPublicId;
+          if (schoolPublicId) {
+            navigate(`/dashboard/${schoolPublicId}`);
+          } else {
+            toast.error("School information not found. Please contact support.");
+          }
         },
         onError: (error: any) => {
           toast.error(

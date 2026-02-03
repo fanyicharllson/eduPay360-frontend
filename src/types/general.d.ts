@@ -14,6 +14,7 @@ interface SchoolResponseDto {
   subscriptionStatus: string;
   trialEndDate?: string;
   createdAt?: string;
+  schoolPublicId: string;
 }
 interface ApiResponse<T> {
   success: boolean;
@@ -32,6 +33,7 @@ interface AuthResponse {
   role: string;
   emailVerified: boolean;
   passwordSet: boolean;
+  schoolPublicId: string;
 }
 
 interface SetPasswordRequest {

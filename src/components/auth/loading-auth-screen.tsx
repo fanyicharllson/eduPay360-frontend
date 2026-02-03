@@ -1,6 +1,12 @@
+
 import { useEffect, useState } from "react";
 
-export function LoadingAuthScreen() {
+type LoadingAuthScreenProps = {
+  title?: string;
+  message?: string;
+};
+
+export function LoadingAuthScreen({ title = "Preparing Your Dashboard", message = "Verifying your credentials" }: LoadingAuthScreenProps) {
   const [dots, setDots] = useState("");
 
   useEffect(() => {
@@ -49,13 +55,14 @@ export function LoadingAuthScreen() {
           />
         </div>
 
+
         {/* Text */}
         <div className="text-center">
           <h2 className="text-2xl font-bold text-foreground mb-2">
-            Preparing Your Dashboard
+            {title}
           </h2>
           <p className="text-muted-foreground">
-            Verifying your credentials{dots}
+            {message}{dots}
           </p>
         </div>
 

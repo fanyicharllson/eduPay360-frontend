@@ -16,6 +16,14 @@ export function ErrorAuthScreen({
   const navigate = useNavigate();
 
   const getErrorDetails = () => {
+    // Custom: Unauthorized access to another school's dashboard
+    if (errorCode === 403 && errorMessage && errorMessage.includes("don't have access")) {
+      return {
+        title: "Access Denied!",
+        description: "You do not have permission to view this school's dashboard. Please check your link or switch to your own school.",
+        icon: "🚫",
+      };
+    }
     if (errorCode === 401 || errorCode === 403) {
       return {
         title: "Session Expired",
@@ -92,7 +100,7 @@ export function ErrorAuthScreen({
           {onRetry && (
             <Button
               onClick={onRetry}
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2"
+              className="flex-1 bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2"
             >
               <RefreshCw className="w-4 h-4" />
               Try Again
@@ -102,7 +110,7 @@ export function ErrorAuthScreen({
           <Button
             onClick={() => navigate("/login")}
             variant="outline"
-            className="flex-1 border-border/50 hover:bg-card/50 flex items-center justify-center gap-2"
+            className="flex-1 border-border/50 hover:bg-card/50 flex items-center justify-center gap-2 hover:text-primary"
           >
             <ArrowLeft className="w-4 h-4" />
             Go to Login
@@ -115,7 +123,7 @@ export function ErrorAuthScreen({
             If you continue to experience issues, please contact our support
             team at{" "}
             <span className="text-primary font-medium">
-              support@edupay360.com
+              charlseempire@gmail.com
             </span>
           </p>
         </div>

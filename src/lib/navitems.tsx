@@ -23,11 +23,11 @@ export interface NavItem {
   adminOnly?: boolean;
 }
 
-export const navItems: NavItem[] = [
+export const getNavItems = (schoolId: string): NavItem[] => [
   {
     icon: <LayoutGrid className="w-5 h-5" />,
     label: "Home",
-    href: "/dashboard",
+    href: `/dashboard/${schoolId}`,
   },
   {
     icon: <Users className="w-5 h-5" />,
@@ -36,12 +36,12 @@ export const navItems: NavItem[] = [
       {
         icon: <Users className="w-4 h-4" />,
         label: "All Students",
-        href: "/dashboard/students",
+        href: `/dashboard/${schoolId}/students`,
       },
       {
         icon: <BarChart3 className="w-4 h-4" />,
         label: "Performance",
-        href: "/dashboard/students/performance",
+        href: `/dashboard/${schoolId}/students/performance`,
       },
     ],
     adminOnly: false,
@@ -53,12 +53,12 @@ export const navItems: NavItem[] = [
       {
         icon: <GraduationCap className="w-4 h-4" />,
         label: "All Teachers",
-        href: "/dashboard/teachers",
+        href: `/dashboard/${schoolId}/teachers`,
       },
       {
         icon: <BookOpen className="w-4 h-4" />,
         label: "Assignments",
-        href: "/dashboard/teachers/assignments",
+        href: `/dashboard/${schoolId}/teachers/assignments`,
       },
     ],
     adminOnly: true,
@@ -66,7 +66,7 @@ export const navItems: NavItem[] = [
   {
     icon: <BookOpen className="w-5 h-5" />,
     label: "Library",
-    href: "/dashboard/library",
+    href: `/dashboard/${schoolId}/library`,
   },
   {
     icon: <FileText className="w-5 h-5" />,
@@ -75,12 +75,12 @@ export const navItems: NavItem[] = [
       {
         icon: <User className="w-4 h-4" />,
         label: "Profile",
-        href: "/dashboard/account/profile",
+        href: `/dashboard/${schoolId}/account/profile`,
       },
       {
         icon: <User className="w-4 h-4" />,
         label: "Users",
-        href: "/dashboard/account/users",
+        href: `/dashboard/${schoolId}/account/users`,
         adminOnly: true,
       },
     ],
@@ -88,27 +88,27 @@ export const navItems: NavItem[] = [
   {
     icon: <BookOpen className="w-5 h-5" />,
     label: "Class",
-    href: "/dashboard/classes",
+    href: `/dashboard/${schoolId}/classes`,
   },
   {
     icon: <FileText className="w-5 h-5" />,
     label: "Subject",
-    href: "/dashboard/subjects",
+    href: `/dashboard/${schoolId}/subjects`,
   },
   {
     icon: <FileCheck className="w-5 h-5" />,
     label: "Routine",
-    href: "/dashboard/academics",
+    href: `/dashboard/${schoolId}/academics`,
   },
   {
     icon: <Clock className="w-5 h-5" />,
     label: "Attendance",
-    href: "/dashboard/attendance",
+    href: `/dashboard/${schoolId}/attendance`,
   },
   {
     icon: <DollarSign className="w-5 h-5" />,
     label: "Finance",
-    href: "/dashboard/finance",
+    href: `/dashboard/${schoolId}/finance`,
   },
   {
     icon: <BarChart3 className="w-5 h-5" />,
@@ -117,12 +117,12 @@ export const navItems: NavItem[] = [
       {
         icon: <BarChart3 className="w-4 h-4" />,
         label: "Results",
-        href: "/dashboard/academics",
+        href: `/dashboard/${schoolId}/academics`,
       },
       {
         icon: <FileText className="w-4 h-4" />,
         label: "Schedule",
-        href: "/dashboard/academics/schedule",
+        href: `/dashboard/${schoolId}/academics/schedule`,
       },
     ],
     adminOnly: true,
@@ -130,18 +130,18 @@ export const navItems: NavItem[] = [
   {
     icon: <Bell className="w-5 h-5" />,
     label: "Notice",
-    href: "/dashboard/notice",
+    href: `/dashboard/${schoolId}/notice`,
   },
   {
     icon: <BusIcon className="w-5 h-5" />,
     label: "Transport",
-    href: "/dashboard/transport",
+    href: `/dashboard/${schoolId}/transport`,
     adminOnly: true,
   },
   {
     icon: <Building2 className="w-5 h-5" />,
     label: "Hostel",
-    href: "/dashboard/hostel",
+    href: `/dashboard/${schoolId}/hostel`,
     adminOnly: true,
   },
 ];

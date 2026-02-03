@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLogout } from "@/hooks/useLogout";
+import { queryClient } from "@/lib/react-query";
 import {
   Dialog,
   DialogTrigger,
@@ -25,6 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "../ui/theme-toggle";
+import { MobileTrialBanner, TrialBanner } from "../ui/trial-banner";
 
 export function Header() {
   const [notifications, setNotifications] = useState([
@@ -33,11 +35,13 @@ export function Header() {
     { id: 3, message: "Exam schedule updated", time: "3 hours ago" },
   ]);
   const [logoutOpen, setLogoutOpen] = useState(false);
+
   const navigate = useNavigate();
   const logoutMutation = useLogout();
-
   const { data } = useCurrentUser();
   const user = data?.data;
+  const schoolPublicId = user?.schoolPublicId;
+
   // Get first name or fallback to truncated name
   const displayName = user?.name ? user.name.split(" ")[0] : "User";
   const displayEmail = user?.email || "";
@@ -45,6 +49,7 @@ export function Header() {
   const handleLogout = async () => {
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
+        queryClient.clear(); // Clear all React Query cache
         toast.success("Logged out successfully.");
         setLogoutOpen(false);
         navigate("/login");
@@ -61,7 +66,7 @@ export function Header() {
     <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-30">
       <div className="flex items-center justify-between gap-4 p-4 sm:p-6">
         {/* Search Bar */}
-        <div className="flex-1 hidden sm:flex">
+        <div className="flex-1 hidden md:flex">
           <div className="relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
@@ -74,10 +79,16 @@ export function Header() {
 
         {/* Right Section */}
         <div className="flex items-center gap-2 sm:gap-4 ml-auto">
+          {/* mobile trial banner */}
+          <MobileTrialBanner user={user} />
+
           {/* Mobile Search */}
-          <Button variant="ghost" size="icon" className="sm:hidden">
+          <Button variant="ghost" size="icon" className="md:hidden">
             <Search className="w-5 h-5" />
           </Button>
+
+          {/* Desktop Trial Banner  */}
+          <TrialBanner user={user} className="max-md:hidden" />
 
           {/* Theme Toggle */}
           <ThemeToggle />
@@ -128,7 +139,7 @@ export function Header() {
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild className="cursor-pointer">
                 <Link
-                  to="/dashboard/settings/profile"
+                  to={`/dashboard/${schoolPublicId}/settings/profile`}
                   className="flex items-center gap-2"
                 >
                   <User className="w-4 h-4" />
@@ -176,7 +187,11 @@ export function Header() {
                     <div className="text-destructive text-sm mt-2">
                       {(() => {
                         const err = logoutMutation.error as any;
-                        return err?.response?.data?.message || err?.message || "Logout failed. Try again.";
+                        return (
+                          err?.response?.data?.message ||
+                          err?.message ||
+                          "Logout failed. Try again."
+                        );
                       })()}
                     </div>
                   )}

@@ -1,11 +1,15 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { queryClient } from "@/lib/react-query";
 
 export function SuccessStep({email}: {email: string}) {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
+  const { data: userData } = useCurrentUser();
+  const schoolPublicId = userData?.data?.schoolPublicId;
 
   // useEffect(() => {
   //   const timer = setTimeout(() => {
@@ -15,9 +19,17 @@ export function SuccessStep({email}: {email: string}) {
   //   return () => clearTimeout(timer);
   // }, [navigate]);
 
-  const handleGoToDashboard = () => {
+  const handleGoToDashboard = async () => {
     setIsRedirecting(true);
-    navigate("/onboarding");
+    await queryClient.invalidateQueries({ queryKey: ["me"] }); // Refetch user data
+    type UserData = { data?: { schoolPublicId?: string } };
+    const latestUser = queryClient.getQueryData<UserData>(["me"]);
+    const latestSchoolPublicId = latestUser?.data?.schoolPublicId || schoolPublicId;
+    if (latestSchoolPublicId) {
+      navigate(`/dashboard/${latestSchoolPublicId}`);
+    } else {
+      navigate("/login");
+    }
   };
 
   return (
