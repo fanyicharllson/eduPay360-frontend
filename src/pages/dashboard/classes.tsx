@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useParams } from "react-router-dom"
-import { useClasses, useCreateClass } from "@/hooks/useClasses"
+import { useClasses, useCreateClass, useDeleteClass } from "@/hooks/useClasses"
 import { useTeachers } from "@/hooks/useTeacher"
 import { EmptyState } from "@/components/ui/empty-state"
 import { CongratsModal } from "@/components/ui/congrats-modal"
@@ -70,6 +70,9 @@ type AddClassFormValues = z.infer<typeof addClassSchema>
 const academicYears = ["2023/2024", "2024/2025", "2025/2026"]
 
 export default function ClassesPage() {
+  const deleteClassMutation = useDeleteClass();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [classToDelete, setClassToDelete] = useState<{ publicId: string, name: string } | null>(null);
 
   const { schoolId } = useParams<{ schoolId: string }>()
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
@@ -96,7 +99,6 @@ export default function ClassesPage() {
   })
 
   // API-ready submit handler
-
   async function onSubmit(data: AddClassFormValues) {
     setIsSubmitting(true)
     try {
@@ -119,10 +121,23 @@ export default function ClassesPage() {
   }
 
   // API-ready delete handler
-  async function handleDelete(classId: number) {
-    // TODO: Replace with actual API call
-    // await fetch(`/api/classes/${classId}`, { method: 'DELETE' })
-    // setClasses(classes.filter((c) => c.id !== classId))
+  function handleDelete(publicId: string, name: string) {
+    setClassToDelete({ publicId, name });
+    setDeleteDialogOpen(true);
+  }
+
+  function confirmDelete() {
+    if (classToDelete) {
+      deleteClassMutation.mutate(classToDelete.publicId, {
+        onSuccess: () => {
+          setDeleteDialogOpen(false);
+          setClassToDelete(null);
+        },
+        onError: () => {
+          setDeleteDialogOpen(false);
+        },
+      });
+    }
   }
 
   // Placeholder handlers for navigation/actions
@@ -483,7 +498,7 @@ export default function ClassesPage() {
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() => handleDelete(cls.id)}
+                        onClick={() => handleDelete(cls.publicId, cls.name)}
                         className="text-destructive focus:text-destructive"
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
@@ -540,6 +555,23 @@ export default function ClassesPage() {
         />
       )}
       </div>
+      {/* Delete Confirmation Dialog (only once, not per class) */}
+      <Dialog open={deleteDialogOpen} onOpenChange={(open) => {
+        if (!deleteClassMutation.isPending) setDeleteDialogOpen(open);
+      }}>
+        <DialogContent className="max-w-sm text-center">
+          <DialogHeader>
+            <DialogTitle>Delete Class</DialogTitle>
+          </DialogHeader>
+          <p className="mb-4">Are you sure you want to delete <span className="font-semibold text-destructive">{classToDelete?.name}</span>? This action cannot be undone.</p>
+          <div className="flex justify-center gap-3">
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={deleteClassMutation.isPending}>Cancel</Button>
+            <Button variant="destructive" onClick={confirmDelete} disabled={deleteClassMutation.isPending}>
+              {deleteClassMutation.isPending ? 'Deleting...' : 'Delete'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

@@ -29,13 +29,13 @@ Cloud-based school management SaaS platform for African schools.
 ## API Docs
 Base URL: `http://localhost:8080/api/v1`
 
-Auth: Bearer token (Auth0 JWT)
+Auth: HttpOnly Cookie
 
 Endpoints:
 - `POST /schools/register` - Register new school
 - `GET /schools/{id}` - Get school details
 - `POST /students` - Add student
-- `POST /payments` - Record payment
+- `POST /payments` - Record payment etc
 
 ## Environment Variables
 See `.env.example`

@@ -99,8 +99,8 @@ export function useDeleteClass() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (id: number | string) => {
-      const res = await api.delete<ApiResponse<void>>(`/classes/${id}`);
+    mutationFn: async (publicId: number | string) => {
+      const res = await api.delete<ApiResponse<void>>(`/classes/public/${publicId}`);
       return res.data;
     },
     onSuccess: (_, deletedId) => {
